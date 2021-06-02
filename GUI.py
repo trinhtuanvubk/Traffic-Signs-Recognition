@@ -6,7 +6,7 @@ import tensorflow as tf
 import numpy
 #load the trained model to classify sign
 from tensorflow.keras.models import load_model
-model = load_model('traffic_classifier.h5')
+model = load_model('model.h5')
 #
 physical_devices = tf.config.experimental.list_physical_devices("GPU")
 tf.config.experimental.set_memory_growth(physical_devices[0], True)

@@ -1,15 +1,54 @@
 import tkinter as tk
 from tkinter import filedialog
+# should not use import * if not get error 
 from tkinter import *
 from PIL import ImageTk, Image
 import tensorflow as tf
 import numpy
+
+# clasify image 
+def classify(file_path):
+    global label_packed
+    image = Image.open(file_path)
+    image = image.resize((30,30))
+    image = numpy.expand_dims(image, axis=0)
+    image = numpy.array(image)
+    print(image.shape)
+    pred = model.predict_classes([image])[0]
+    sign = classes[pred+1]
+    print(sign)
+    label.configure(foreground='#011638', text=sign) 
+   
+# show button
+def show_classify_button(file_path):
+    classify_b=Button(top,text="Classify Image",command=lambda: classify(file_path),padx=10,pady=5)
+    classify_b.configure(background='#364156', foreground='white',font=('arial',10,'bold'))
+    classify_b.place(relx=0.79,rely=0.46)
+
+# upload image from computer 
+def upload_image():
+    try:
+        file_path=filedialog.askopenfilename()
+        uploaded=Image.open(file_path)
+        uploaded.thumbnail(((top.winfo_width()/2.25),(top.winfo_height()/2.25)))
+        im=ImageTk.PhotoImage(uploaded)
+        
+        sign_image.configure(image=im)
+        sign_image.image=im
+        label.configure(text='')
+        show_classify_button(file_path)
+    except:
+        pass
+
+
 #load the trained model to classify sign
 from tensorflow.keras.models import load_model
 model = load_model('model.h5')
-#
+
+#use GPU 
 physical_devices = tf.config.experimental.list_physical_devices("GPU")
 tf.config.experimental.set_memory_growth(physical_devices[0], True)
+
 #dictionary to label all traffic signs class.
 classes = { 1:'Speed limit (20km/h)',
             2:'Speed limit (30km/h)',      
@@ -63,38 +102,6 @@ top.configure(background='#CDCDCD')
 
 label=Label(top,background='#CDCDCD', font=('arial',15,'bold'))
 sign_image = Label(top)
-
-def classify(file_path):
-    global label_packed
-    image = Image.open(file_path)
-    image = image.resize((30,30))
-    image = numpy.expand_dims(image, axis=0)
-    image = numpy.array(image)
-    print(image.shape)
-    pred = model.predict_classes([image])[0]
-    sign = classes[pred+1]
-    print(sign)
-    label.configure(foreground='#011638', text=sign) 
-   
-
-def show_classify_button(file_path):
-    classify_b=Button(top,text="Classify Image",command=lambda: classify(file_path),padx=10,pady=5)
-    classify_b.configure(background='#364156', foreground='white',font=('arial',10,'bold'))
-    classify_b.place(relx=0.79,rely=0.46)
-
-def upload_image():
-    try:
-        file_path=filedialog.askopenfilename()
-        uploaded=Image.open(file_path)
-        uploaded.thumbnail(((top.winfo_width()/2.25),(top.winfo_height()/2.25)))
-        im=ImageTk.PhotoImage(uploaded)
-        
-        sign_image.configure(image=im)
-        sign_image.image=im
-        label.configure(text='')
-        show_classify_button(file_path)
-    except:
-        pass
 
 upload=Button(top,text="Upload an image",command=upload_image,padx=10,pady=5)
 upload.configure(background='#364156', foreground='white',font=('arial',10,'bold'))

@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import filedialog
-# should not use import * if not get error 
 from tkinter import *
 from PIL import ImageTk, Image
 import tensorflow as tf
